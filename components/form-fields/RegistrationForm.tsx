@@ -1,6 +1,6 @@
-import React, { ChangeEvent, useState } from "react";
+import React, { useState } from "react";
 import * as Yup from "yup";
-import { useFormik } from "formik";
+import { useFormik, FormikProps } from "formik";
 import {
   FormControl,
   TextField,
@@ -24,13 +24,24 @@ interface State {
   showConfirm: boolean;
 }
 
+interface Values {
+  username: string;
+  password: string;
+  confirm: string;
+  firstName: string;
+  middleName: string;
+  lastName: string;
+  emailAddress: string;
+  mobileNumber: string;
+}
+
 export const RegistrationForm = () => {
   const [values, setValues] = useState<State>({
     showPassword: false,
     showConfirm: false,
   });
 
-  const formik = useFormik({
+  const formik = useFormik<Values>({
     initialValues: {
       username: "",
       password: "",
