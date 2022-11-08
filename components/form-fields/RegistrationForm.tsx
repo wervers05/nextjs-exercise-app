@@ -1,8 +1,16 @@
-import React from "react";
+import React, { ChangeEvent, useState } from "react";
 import * as Yup from "yup";
 import { useFormik } from "formik";
-import { FormControl, TextField, Button, Box } from "@mui/material";
+import {
+  FormControl,
+  TextField,
+  Button,
+  InputAdornment,
+  FormGroup,
+} from "@mui/material";
 import { FormMain, FormTitle, FormContent } from "../sharedstyles";
+import { Visibility, VisibilityOff } from "@mui/icons-material";
+import IconButton from "@mui/material/IconButton";
 
 const passwordRules =
   /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^&\*])(?=.{8,})/;
@@ -11,7 +19,17 @@ const passwordMessage =
 const phoneRules =
   /^((\\+[1-9]{1,4}[ \\-]*)|(\\([0-9]{2,3}\\)[ \\-]*)|([0-9]{2,4})[ \\-]*)*?[0-9]{3,4}?[ \\-]*[0-9]{3,4}?$/;
 
+interface State {
+  showPassword: boolean;
+  showConfirm: boolean;
+}
+
 export const RegistrationForm = () => {
+  const [values, setValues] = useState<State>({
+    showPassword: false,
+    showConfirm: false,
+  });
+
   const formik = useFormik({
     initialValues: {
       username: "",
@@ -52,9 +70,24 @@ export const RegistrationForm = () => {
       mobileNumber: Yup.string()
         .required("This field is required")
         .matches(phoneRules, "Must enter valid phone number")
+        .min(11, "11 digit phone number only")
         .max(11, "11 digit phone number only"),
     }),
   });
+
+  const handleClickShowPassword = () => {
+    setValues({
+      ...values,
+      showPassword: !values.showPassword,
+    });
+  };
+  const handleClickShowConfirm = () => {
+    setValues({
+      ...values,
+      showConfirm: !values.showConfirm,
+    });
+  };
+
   return (
     <>
       <FormMain>
@@ -75,11 +108,13 @@ export const RegistrationForm = () => {
               helperText={formik.touched.username && formik.errors.username}
             />
           </FormControl>
-          <Box
+          <FormGroup
             sx={{
-              marginLeft: 1,
-              marginRight: 1,
-              "& .MuiTextField-root": { width: "220px" },
+              marginLeft: 0,
+              marginRight: 0,
+              // display: "flex",
+              // flexWrap: "wrap",
+              "& .MuiTextField-root": { width: "350px" },
             }}
           >
             <FormControl margin={"dense"} hiddenLabel={true}>
@@ -87,12 +122,29 @@ export const RegistrationForm = () => {
                 required
                 id="password"
                 label="Password"
-                type={"password"}
+                type={values.showPassword ? "text" : "password"}
                 value={formik.values.password || ""}
                 onChange={formik.handleChange}
                 onBlur={formik.handleBlur}
                 error={formik.touched.password && !!formik.errors.password}
-                helperText={formik.touched.password && formik.errors.password}
+                helperText={formik.touched.username && formik.errors.username}
+                InputProps={{
+                  endAdornment: (
+                    <InputAdornment position="end">
+                      <IconButton
+                        aria-label="toggle password visibility"
+                        onClick={handleClickShowPassword}
+                        edge="end"
+                      >
+                        {values.showPassword ? (
+                          <VisibilityOff />
+                        ) : (
+                          <Visibility />
+                        )}
+                      </IconButton>
+                    </InputAdornment>
+                  ),
+                }}
               />
             </FormControl>
             <FormControl margin={"dense"} hiddenLabel={true}>
@@ -100,15 +152,32 @@ export const RegistrationForm = () => {
                 required
                 id="confirm"
                 label="Confirm Password"
-                type={"password"}
+                type={values.showConfirm ? "text" : "password"}
                 value={formik.values.confirm || ""}
                 onChange={formik.handleChange}
                 onBlur={formik.handleBlur}
                 error={formik.touched.confirm && !!formik.errors.confirm}
                 helperText={formik.touched.confirm && formik.errors.confirm}
+                InputProps={{
+                  endAdornment: (
+                    <InputAdornment position="end">
+                      <IconButton
+                        aria-label="toggle password visibility"
+                        onClick={handleClickShowConfirm}
+                        edge="end"
+                      >
+                        {values.showConfirm ? (
+                          <VisibilityOff />
+                        ) : (
+                          <Visibility />
+                        )}
+                      </IconButton>
+                    </InputAdornment>
+                  ),
+                }}
               />
             </FormControl>
-          </Box>
+          </FormGroup>
           <FormControl margin={"dense"} hiddenLabel={true}>
             <TextField
               required
@@ -180,8 +249,8 @@ export const RegistrationForm = () => {
           <Button
             variant="contained"
             sx={{
-              marginTop: 2,
-              marginBottom: 2,
+              marginTop: 1,
+              marginBottom: 3,
               color: "white",
               background: "black",
             }}

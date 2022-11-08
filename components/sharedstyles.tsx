@@ -61,7 +61,7 @@ const FormMain = styled.div`
   gap: 12px;
   background: #fff;
   border-radius: 20px;
-  box-shadow: rgba(1, 5, 123, 0.671) 0px 1px 17px;
+  box-shadow: rgba(0, 109, 177, 0.671) 0px 1px 17px;
 `;
 
 const FormTitle = styled.h1`
