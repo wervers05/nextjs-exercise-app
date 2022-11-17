@@ -17,35 +17,22 @@ const Login = () => {
   );
 };
 
-const updateIsLogin = async (e: boolean) => {
-  await axios.put(
-    "https://6371e259025414c637002627.mockapi.io/api/fiddle/users",
-    {
-      isLogin: e,
-    }
-  );
-};
-
-export const getServerSideProps = async (ctx: any) => {
+export const getServerSideProps = async (ctx) => {
   const cookies = nookies.get(ctx);
-  let user = null;
+  let users = null;
+
   if (cookies?.jwt) {
     try {
       const { data } = await axios.get(
-        `https://6371e259025414c637002627.mockapi.io/api/fiddle/users`,
-        {
-          headers: {
-            Authorization: `Bearer ${cookies.jwt}`,
-          },
-        }
+        "https://6371e259025414c637002627.mockapi.io/api/fiddle/users"
       );
-      user = data;
+      users = data;
     } catch (e) {
       console.log(e);
     }
   }
 
-  if (user) {
+  if (cookies?.jwt && cookies?.LoginStatus) {
     return {
       redirect: {
         permanent: false,

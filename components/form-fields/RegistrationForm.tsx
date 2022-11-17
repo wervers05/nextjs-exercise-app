@@ -42,7 +42,6 @@ export const RegistrationForm = () => {
     showConfirm: false,
   });
   const router = useRouter();
-  const [message, setMessage] = useState("");
 
   const formik = useFormik<Values>({
     initialValues: {
@@ -56,13 +55,15 @@ export const RegistrationForm = () => {
       phone: "",
     },
     onSubmit: async (values: Values) => {
-      setMessage("Registered successfully, please continue to login");
       try {
-        await axios.post("api/register", values);
-        router.replace("/");
+        await axios.post(
+          "https://6371e259025414c637002627.mockapi.io/api/fiddle/users",
+          values
+        );
       } catch (err) {
         console.log(err.response.data);
       }
+      router.replace("/login");
     },
     validationSchema: Yup.object({
       username: Yup.string()

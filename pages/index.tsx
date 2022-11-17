@@ -2,20 +2,7 @@ import Head from "next/head";
 import axios from "axios";
 import NavBar from "../components/navigation/NavBar";
 
-interface Props {
-  activeUser: {
-    id: number;
-    username: string;
-    firstName: string;
-    middleName: string;
-    lastName: string;
-    email: string;
-    phone: string;
-    isLogin: boolean;
-  }[];
-}
-
-export default function Home({ activeUser }: Props) {
+export default function Home({ activeUser }) {
   return (
     <>
       <Head>
@@ -24,29 +11,11 @@ export default function Home({ activeUser }: Props) {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <NavBar />
-      {activeUser.map((user: any) => (
+      {/* {activeUser.map((user: any) => (
         <div key={user.id} className="capitalized">
           Welcome {`${user.firstName} ${user.lastName}`}!
         </div>
-      ))}
+      ))} */}
     </>
   );
 }
-
-export const getServerSideProps = async () => {
-  let activeUser = null;
-
-  const { data } = await axios.get(
-    "https://6371e259025414c637002627.mockapi.io/api/fiddle/users"
-  );
-
-  activeUser = data.filter((user: any) => {
-    if (user.isLogin) {
-      return user;
-    }
-  });
-
-  return {
-    props: { activeUser },
-  };
-};

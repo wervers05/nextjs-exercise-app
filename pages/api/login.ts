@@ -1,44 +1,36 @@
-import axios from "axios";
 import { setCookie } from "nookies";
 import { NextApiRequest, NextApiResponse } from "next";
-import { useRouter } from "next/router";
+import { sign } from 'jsonwebtoken'
 
-
-interface Input {
-    username: string;
-    password: string;
-}
-
-const secretKey = process.env.SECRET;
-const updateIsLogin = async (e: boolean) => {
-  await axios.put("https://6371e259025414c637002627.mockapi.io/api/fiddle/users", {
-    isLogin: e,
-  });
-};
+const secretKey = "mysecretkey";
 
   export default async (req: NextApiRequest, res: NextApiResponse) => {
 
-    updateIsLogin(true);
-    const { password, username } = await req.body;
+    const { username } = await req.body;
     try {
-      const getRes = await axios.get(
-        "https://6371e259025414c637002627.mockapi.io/api/fiddle/users"
+      const token = sign(
+        {
+          exp:Math.floor(Date.now() / 1000) * 60 * 60 * 24 * 30,
+          username: username,
+        },
+        secretKey
       );
-      const users = getRes.data;
-      users.filter((user: Input) => {
-        if (user.username === username && user.password === password) {
-          return user;
-        }
-      });
-  
-      setCookie({ res }, "jwt", "_token", {
+
+      setCookie({ res }, 'jwt', token, {
         httpOnly: true,
+        secure: process.env.NODE_ENV !== 'test',
         maxAge: 30 * 24 * 60 * 60,
-        path: "/",
+        path: '/',
       });
-  
+
+      setCookie({ res }, 'LoginStatus', "true", {
+        httpOnly: true,
+        secure: process.env.NODE_ENV !== 'test',
+        maxAge: 30 * 24 * 60 * 60,
+        path: '/',
+      });
+
       res.status(200).end();
-  
     } catch (e) {
       res.status(400).send(e);
     }

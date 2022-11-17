@@ -1,19 +1,13 @@
 import React, { useState } from "react";
 import { useFormik } from "formik";
-import {
-  FormControl,
-  TextField,
-  Button,
-  InputAdornment,
-  FormGroup,
-} from "@mui/material";
+import { FormControl, TextField, Button, InputAdornment } from "@mui/material";
 import { ContainerForm, FormTitle, FormContent } from "../formstyles";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 import IconButton from "@mui/material/IconButton";
 import * as Yup from "yup";
 import Link from "next/link";
 import axios from "axios";
-import router from "next/router";
+import { useRouter } from "next/router";
 
 interface Inputs {
   username: string;
@@ -24,6 +18,7 @@ interface Toggle {
 }
 
 export const LoginForm = () => {
+  const router = useRouter();
   const [value, setValue] = useState<Toggle>({
     showPassword: false,
   });
@@ -34,11 +29,11 @@ export const LoginForm = () => {
       password: "",
     },
     onSubmit: async (values: Inputs) => {
-      const getResult = await axios.get(
+      const getRes = await axios.get(
         "https://6371e259025414c637002627.mockapi.io/api/fiddle/users"
       );
-      const data = getResult.data;
-      const result = data.filter((user: Inputs) => {
+      const data = getRes.data;
+      const result = data.filter((user) => {
         if (
           user.username === values.username &&
           user.password === values.password
@@ -51,7 +46,7 @@ export const LoginForm = () => {
         console.log("User does not exist");
       } else {
         await axios.post("/api/login", values);
-        router.replace("/");
+        router.replace("/profile");
       }
     },
     validationSchema: Yup.object({
@@ -125,7 +120,7 @@ export const LoginForm = () => {
           >
             Login
           </Button>
-          <Link href="/register">Click here to register</Link>
+          <Link href={"/register"}>Click here to register</Link>
         </FormContent>
       </ContainerForm>
     </>

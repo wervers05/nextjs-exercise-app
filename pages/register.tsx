@@ -17,9 +17,9 @@ const Register = () => {
   );
 };
 
-export const getServerSideProps = async (ctx: any) => {
+export const getServerSideProps = async (ctx) => {
   const cookies = nookies.get(ctx);
-  let user = null;
+  let users = null;
   if (cookies?.jwt) {
     try {
       const { data } = await axios.get(
@@ -30,13 +30,13 @@ export const getServerSideProps = async (ctx: any) => {
           },
         }
       );
-      user = data;
+      users = data;
     } catch (e) {
       console.log(e);
     }
   }
 
-  if (user) {
+  if (users) {
     return {
       redirect: {
         permanent: false,

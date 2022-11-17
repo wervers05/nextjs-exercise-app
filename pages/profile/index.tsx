@@ -2,25 +2,13 @@ import React from "react";
 import axios from "axios";
 import nookies from "nookies";
 import Head from "next/head";
-import { UserProfile } from "../../components/form-fields/UserProfile";
 import NavBar from "../../components/navigation/NavBar";
 import { useRouter } from "next/router";
 import Link from "next/link";
+import { FormContent, FormTitle } from "../../components/formstyles";
+import { Box, Typography } from "@mui/material";
 
-interface Inputs {
-  users: {
-    username: string;
-    password: string;
-    confirm: string;
-    firstName: string;
-    middleName: string;
-    lastName: string;
-    email: string;
-    phone: string;
-  };
-}
-
-const Profile = ({ users }: Inputs) => {
+const Profile = ({ users }) => {
   const router = useRouter();
   const id = router.query.id as string;
   return (
@@ -31,24 +19,33 @@ const Profile = ({ users }: Inputs) => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <NavBar />
-      <Link href={`/profile/${id}`}></Link>
-      <UserProfile users={users} />
+      <FormTitle>Users</FormTitle>
+      <Box
+        sx={{
+          marginTop: 2,
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+        }}
+      >
+        {users?.map((user) => (
+          <Typography key={user.id}>
+            <Link href={`/profile/${user.id}`}>{user.username}</Link>
+          </Typography>
+        ))}
+      </Box>
     </>
   );
 };
 
-export const getServerSideProps = async (ctx: any) => {
+export const getServerSideProps = async (ctx) => {
   const cookies = nookies.get(ctx);
   let users = null;
+
   if (cookies?.jwt) {
     try {
       const { data } = await axios.get(
-        `https://6371e259025414c637002627.mockapi.io/api/fiddle/users`,
-        {
-          headers: {
-            Authorization: `Bearer ${cookies.jwt}`,
-          },
-        }
+        `https://6371e259025414c637002627.mockapi.io/api/fiddle/users`
       );
       users = data;
       console.log(data);
@@ -57,7 +54,11 @@ export const getServerSideProps = async (ctx: any) => {
     }
   }
 
-  if (!users) {
+  if (
+    cookies?.LoginStatus === "false" ||
+    !cookies?.LoginStatus ||
+    !cookies?.jwt
+  ) {
     return {
       redirect: {
         permanent: false,
@@ -69,6 +70,8 @@ export const getServerSideProps = async (ctx: any) => {
   return {
     props: { users },
   };
+
+  revalidate: 10;
 };
 
 export default Profile;
