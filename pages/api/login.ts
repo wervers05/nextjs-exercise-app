@@ -6,7 +6,7 @@ const secretKey = "mysecretkey";
 
   export default async (req: NextApiRequest, res: NextApiResponse) => {
 
-    const { username } = await req.body;
+    const { username } = req.body;
     try {
       const token = sign(
         {
