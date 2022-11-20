@@ -1,13 +1,19 @@
 import React, { useState } from "react";
 import * as Yup from "yup";
 import { useFormik } from "formik";
-import { FormControl, TextField, Button, InputAdornment } from "@mui/material";
-import { ContainerForm, FormTitle, FormContent } from "../formstyles";
 import {
-  LineAxisOutlined,
-  Visibility,
-  VisibilityOff,
-} from "@mui/icons-material";
+  FormControl,
+  TextField,
+  Button,
+  InputAdornment,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogContentText,
+  DialogActions,
+} from "@mui/material";
+import { ContainerForm, FormTitle, FormContent } from "../formstyles";
+import { Visibility, VisibilityOff } from "@mui/icons-material";
 import IconButton from "@mui/material/IconButton";
 import PersonIcon from "@mui/icons-material/Person";
 import Link from "next/link";
@@ -38,6 +44,15 @@ interface Values {
 }
 
 export const RegistrationForm = () => {
+  const [loading, setLoading] = useState(false);
+  const [submit, setSubmit] = useState(false);
+  const [open, setOpen] = useState(false);
+  const handleClickOpen = () => {
+    setOpen(true);
+  };
+  const handleClose = () => {
+    setOpen(false);
+  };
   const [values, setValues] = useState<State>({
     showPassword: false,
     showConfirm: false,
@@ -56,6 +71,8 @@ export const RegistrationForm = () => {
       phone: "",
     },
     onSubmit: async (values: Values) => {
+      handleClickOpen();
+
       try {
         await axios.post(
           "https://6371e259025414c637002627.mockapi.io/api/fiddle/users",
@@ -119,6 +136,28 @@ export const RegistrationForm = () => {
           onSubmit={formik.handleSubmit}
           onReset={formik.handleReset}
         >
+          {submit && (
+            <Dialog
+              open={open}
+              onClose={handleClose}
+              aria-labelledby="alert-dialog-title"
+              aria-describedby="alert-dialog-description"
+            >
+              <DialogTitle aria-labelledby="alert-dialog-title">
+                {"Message!"}
+              </DialogTitle>
+              <DialogContent>
+                <DialogContentText id="alert-dialog-description">
+                  User successfully registered!
+                </DialogContentText>
+              </DialogContent>
+              <DialogActions>
+                <Button onClick={handleClose} autoFocus>
+                  OK
+                </Button>
+              </DialogActions>
+            </Dialog>
+          )}
           <FormControl margin={"dense"} hiddenLabel={true}>
             <TextField
               required

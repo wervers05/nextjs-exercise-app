@@ -13,6 +13,8 @@ import {
 } from "@mui/material";
 import { ContainerForm, FormTitle, FormContent } from "../formstyles";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
+import { LoadingButton } from "@mui/lab";
+import CircularProgress from "@mui/material/CircularProgress";
 import PersonIcon from "@mui/icons-material/Person";
 import IconButton from "@mui/material/IconButton";
 import * as Yup from "yup";
@@ -159,8 +161,10 @@ export const LoginForm = () => {
               }}
             />
           </FormControl>
-          <Button
+          <LoadingButton
             variant="contained"
+            loading={loading}
+            loadingIndicator={<CircularProgress />}
             sx={{
               marginTop: 1,
               marginBottom: 3,
@@ -170,7 +174,7 @@ export const LoginForm = () => {
             type="submit"
           >
             Login
-          </Button>
+          </LoadingButton>
           <Link href={"/register"}>Click here to register</Link>
         </FormContent>
       </ContainerForm>

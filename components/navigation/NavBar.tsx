@@ -58,7 +58,7 @@ const NavBar = () => {
               <NavItem active={activeIdx === idx} {...menu} />
             </div>
           ))}
-          <Link className="!hidden" href={"/login"} onClick={loginHandle}>
+          <Link href={"/login"} onClick={loginHandle}>
             Login
           </Link>
           <Link href={"/login"} onClick={logoutHandle}>
