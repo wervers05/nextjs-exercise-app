@@ -5,8 +5,9 @@ import Head from "next/head";
 import NavBar from "../../components/navigation/NavBar";
 import { useRouter } from "next/router";
 import Link from "next/link";
-import { FormContent, FormTitle } from "../../components/formstyles";
+import { FormTitle } from "../../components/formstyles";
 import { Box, Typography } from "@mui/material";
+import { GetServerSideProps } from "next/types";
 
 const Profile = ({ users }) => {
   const router = useRouter();
@@ -38,7 +39,7 @@ const Profile = ({ users }) => {
   );
 };
 
-export const getServerSideProps = async (ctx) => {
+export const getServerSideProps: GetServerSideProps = async (ctx) => {
   const cookies = nookies.get(ctx);
   let users = null;
 

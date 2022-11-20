@@ -3,6 +3,7 @@ import Head from "next/head";
 import React from "react";
 import nookies from "nookies";
 import { LoginForm } from "../components/form-fields/LoginForm";
+import { GetServerSideProps } from "next/types";
 
 const Login = () => {
   return (
@@ -17,7 +18,7 @@ const Login = () => {
   );
 };
 
-export const getServerSideProps = async (ctx) => {
+export const getServerSideProps: GetServerSideProps = async (ctx) => {
   const cookies = nookies.get(ctx);
   let users = null;
 

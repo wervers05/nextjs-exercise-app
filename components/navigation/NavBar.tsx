@@ -5,6 +5,7 @@ import Router from "next/router";
 
 import NavItem from "./NavItem";
 import axios from "axios";
+import { useMediaQuery } from "@mui/material";
 
 const MENU_LIST = [
   { text: "Home", href: "/" },
@@ -57,10 +58,10 @@ const NavBar = () => {
               <NavItem active={activeIdx === idx} {...menu} />
             </div>
           ))}
-          <Link href={"/login"} onClick={loginHandle}>
+          <Link className="!hidden" href={"/login"} onClick={loginHandle}>
             Login
           </Link>
-          <Link href={"/"} onClick={logoutHandle}>
+          <Link href={"/login"} onClick={logoutHandle}>
             Logout
           </Link>
         </div>

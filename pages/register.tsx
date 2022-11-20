@@ -3,6 +3,7 @@ import React from "react";
 import axios from "axios";
 import nookies from "nookies";
 import { RegistrationForm } from "../components/form-fields/RegistrationForm";
+import { GetServerSideProps } from "next/types";
 
 const Register = () => {
   return (
@@ -17,7 +18,7 @@ const Register = () => {
   );
 };
 
-export const getServerSideProps = async (ctx) => {
+export const getServerSideProps: GetServerSideProps = async (ctx) => {
   const cookies = nookies.get(ctx);
   let users = null;
   if (cookies?.jwt) {

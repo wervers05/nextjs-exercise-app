@@ -9,6 +9,7 @@ import {
   VisibilityOff,
 } from "@mui/icons-material";
 import IconButton from "@mui/material/IconButton";
+import PersonIcon from "@mui/icons-material/Person";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import axios from "axios";
@@ -129,6 +130,13 @@ export const RegistrationForm = () => {
               error={formik.touched.username && !!formik.errors.username}
               helperText={formik.touched.username && formik.errors.username}
               size="small"
+              InputProps={{
+                endAdornment: (
+                  <InputAdornment position="end">
+                    <PersonIcon />
+                  </InputAdornment>
+                ),
+              }}
             />
           </FormControl>
           <FormControl margin={"dense"} hiddenLabel={true}>

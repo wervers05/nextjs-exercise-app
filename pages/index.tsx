@@ -1,6 +1,8 @@
 import Head from "next/head";
 import axios from "axios";
 import NavBar from "../components/navigation/NavBar";
+import { Container } from "../components/sharedstyles";
+import { FormContent, FormTitle } from "../components/formstyles";
 
 export default function Home({ activeUser }) {
   return (
@@ -11,11 +13,10 @@ export default function Home({ activeUser }) {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <NavBar />
-      {/* {activeUser.map((user: any) => (
-        <div key={user.id} className="capitalized">
-          Welcome {`${user.firstName} ${user.lastName}`}!
-        </div>
-      ))} */}
+      <Container>
+        <FormTitle>Home</FormTitle>
+        <FormContent>Sample</FormContent>
+      </Container>
     </>
   );
 }

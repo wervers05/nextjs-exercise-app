@@ -6,7 +6,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/router";
 import Head from "next/head";
-import { Typography, Box } from "@mui/material";
+import { Typography, Box, Button } from "@mui/material";
 import { GetServerSideProps } from "next";
 
 // export default async function handler(req, res) {
@@ -58,6 +58,7 @@ const Users = ({ users, id }) => {
             </div>
           ))}
         </div>
+        <Link href={"/profile"}>Back</Link>
       </Box>
     </>
   );
