@@ -20,7 +20,7 @@ const NavBar = () => {
   const loginHandle = async () => {
     try {
       await axios.get("/api/login");
-      Router.push("/profile");
+      //Router.push("/profile");
     } catch (e) {
       console.log(e);
     }
@@ -28,7 +28,7 @@ const NavBar = () => {
   const logoutHandle = async () => {
     try {
       await axios.get("/api/logout");
-      Router.push("/login");
+      //Router.push("/login");
     } catch (e) {
       console.log(e);
     }
