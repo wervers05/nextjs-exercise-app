@@ -1,4 +1,4 @@
-import React, { ChangeEvent, useState } from "react";
+import React, { useState } from "react";
 import * as Yup from "yup";
 import { useFormik } from "formik";
 import {
@@ -6,11 +6,19 @@ import {
   TextField,
   Button,
   InputAdornment,
-  FormGroup,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogContentText,
+  DialogActions,
 } from "@mui/material";
-import { FormMain, FormTitle, FormContent } from "../sharedstyles";
+import { ContainerForm, FormTitle, FormContent } from "../formstyles";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 import IconButton from "@mui/material/IconButton";
+import PersonIcon from "@mui/icons-material/Person";
+import Link from "next/link";
+import { useRouter } from "next/router";
+import axios from "axios";
 
 const passwordRules =
   /^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#\$%\^&\*])(?=.{8,})/;
@@ -24,13 +32,34 @@ interface State {
   showConfirm: boolean;
 }
 
+interface Values {
+  username: string;
+  password: string;
+  confirm: string;
+  firstName: string;
+  middleName: string;
+  lastName: string;
+  email: string;
+  phone: string;
+}
+
 export const RegistrationForm = () => {
+  const [loading, setLoading] = useState(false);
+  const [submit, setSubmit] = useState(false);
+  const [open, setOpen] = useState(false);
+  const handleClickOpen = () => {
+    setOpen(true);
+  };
+  const handleClose = () => {
+    setOpen(false);
+  };
   const [values, setValues] = useState<State>({
     showPassword: false,
     showConfirm: false,
   });
+  const router = useRouter();
 
-  const formik = useFormik({
+  const formik = useFormik<Values>({
     initialValues: {
       username: "",
       password: "",
@@ -38,14 +67,25 @@ export const RegistrationForm = () => {
       firstName: "",
       middleName: "",
       lastName: "",
-      emailAddress: "",
-      mobileNumber: "",
+      email: "",
+      phone: "",
     },
-    onSubmit: (values) => {
-      console.log(JSON.stringify(values, null, 2));
+    onSubmit: async (values: Values) => {
+      handleClickOpen();
+
+      try {
+        await axios.post(
+          "https://6371e259025414c637002627.mockapi.io/api/fiddle/users",
+          values
+        );
+      } catch (err) {
+        console.log(err.response.data);
+      }
+      router.replace("/login");
     },
     validationSchema: Yup.object({
       username: Yup.string()
+        .trim()
         .required("This field is required")
         .min(4, "Username must not be less than 4 characters")
         .max(10, "Username must not exceed 10 characters"),
@@ -64,10 +104,10 @@ export const RegistrationForm = () => {
       lastName: Yup.string()
         .required("This field is required")
         .matches(/[a-zA-Z]/, "Must contain only letters"),
-      emailAddress: Yup.string()
+      email: Yup.string()
         .required("This field is required")
         .email("Must be a valid email"),
-      mobileNumber: Yup.string()
+      phone: Yup.string()
         .required("This field is required")
         .matches(phoneRules, "Must enter valid phone number")
         .min(11, "11 digit phone number only")
@@ -75,13 +115,13 @@ export const RegistrationForm = () => {
     }),
   });
 
-  const handleClickShowPassword = () => {
+  const toggleShowPassword = () => {
     setValues({
       ...values,
       showPassword: !values.showPassword,
     });
   };
-  const handleClickShowConfirm = () => {
+  const toggleShowConfirm = () => {
     setValues({
       ...values,
       showConfirm: !values.showConfirm,
@@ -90,12 +130,34 @@ export const RegistrationForm = () => {
 
   return (
     <>
-      <FormMain>
+      <ContainerForm>
         <FormTitle>Register</FormTitle>
         <FormContent
           onSubmit={formik.handleSubmit}
           onReset={formik.handleReset}
         >
+          {submit && (
+            <Dialog
+              open={open}
+              onClose={handleClose}
+              aria-labelledby="alert-dialog-title"
+              aria-describedby="alert-dialog-description"
+            >
+              <DialogTitle aria-labelledby="alert-dialog-title">
+                {"Message!"}
+              </DialogTitle>
+              <DialogContent>
+                <DialogContentText id="alert-dialog-description">
+                  User successfully registered!
+                </DialogContentText>
+              </DialogContent>
+              <DialogActions>
+                <Button onClick={handleClose} autoFocus>
+                  OK
+                </Button>
+              </DialogActions>
+            </Dialog>
+          )}
           <FormControl margin={"dense"} hiddenLabel={true}>
             <TextField
               required
@@ -106,78 +168,71 @@ export const RegistrationForm = () => {
               onBlur={formik.handleBlur}
               error={formik.touched.username && !!formik.errors.username}
               helperText={formik.touched.username && formik.errors.username}
+              size="small"
+              InputProps={{
+                endAdornment: (
+                  <InputAdornment position="end">
+                    <PersonIcon />
+                  </InputAdornment>
+                ),
+              }}
             />
           </FormControl>
-          <FormGroup
-            sx={{
-              marginLeft: 0,
-              marginRight: 0,
-              // display: "flex",
-              // flexWrap: "wrap",
-              "& .MuiTextField-root": { width: "350px" },
-            }}
-          >
-            <FormControl margin={"dense"} hiddenLabel={true}>
-              <TextField
-                required
-                id="password"
-                label="Password"
-                type={values.showPassword ? "text" : "password"}
-                value={formik.values.password || ""}
-                onChange={formik.handleChange}
-                onBlur={formik.handleBlur}
-                error={formik.touched.password && !!formik.errors.password}
-                helperText={formik.touched.username && formik.errors.username}
-                InputProps={{
-                  endAdornment: (
-                    <InputAdornment position="end">
-                      <IconButton
-                        aria-label="toggle password visibility"
-                        onClick={handleClickShowPassword}
-                        edge="end"
-                      >
-                        {values.showPassword ? (
-                          <VisibilityOff />
-                        ) : (
-                          <Visibility />
-                        )}
-                      </IconButton>
-                    </InputAdornment>
-                  ),
-                }}
-              />
-            </FormControl>
-            <FormControl margin={"dense"} hiddenLabel={true}>
-              <TextField
-                required
-                id="confirm"
-                label="Confirm Password"
-                type={values.showConfirm ? "text" : "password"}
-                value={formik.values.confirm || ""}
-                onChange={formik.handleChange}
-                onBlur={formik.handleBlur}
-                error={formik.touched.confirm && !!formik.errors.confirm}
-                helperText={formik.touched.confirm && formik.errors.confirm}
-                InputProps={{
-                  endAdornment: (
-                    <InputAdornment position="end">
-                      <IconButton
-                        aria-label="toggle password visibility"
-                        onClick={handleClickShowConfirm}
-                        edge="end"
-                      >
-                        {values.showConfirm ? (
-                          <VisibilityOff />
-                        ) : (
-                          <Visibility />
-                        )}
-                      </IconButton>
-                    </InputAdornment>
-                  ),
-                }}
-              />
-            </FormControl>
-          </FormGroup>
+          <FormControl margin={"dense"} hiddenLabel={true}>
+            <TextField
+              required
+              id="password"
+              label="Password"
+              type={values.showPassword ? "text" : "password"}
+              value={formik.values.password || ""}
+              onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
+              error={formik.touched.password && !!formik.errors.password}
+              helperText={formik.touched.password && formik.errors.password}
+              size="small"
+              InputProps={{
+                endAdornment: (
+                  <InputAdornment position="end">
+                    <IconButton
+                      aria-label="toggle password visibility"
+                      onClick={toggleShowPassword}
+                      edge="end"
+                    >
+                      {values.showPassword ? <VisibilityOff /> : <Visibility />}
+                    </IconButton>
+                  </InputAdornment>
+                ),
+              }}
+            />
+          </FormControl>
+          <FormControl margin={"dense"} hiddenLabel={true}>
+            <TextField
+              required
+              id="confirm"
+              label="Confirm Password"
+              type={values.showConfirm ? "text" : "password"}
+              value={formik.values.confirm || ""}
+              onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
+              error={formik.touched.confirm && !!formik.errors.confirm}
+              helperText={formik.touched.confirm && formik.errors.confirm}
+              size="small"
+              InputProps={{
+                endAdornment: (
+                  <InputAdornment position="end">
+                    <IconButton
+                      aria-label="toggle password visibility"
+                      onClick={toggleShowConfirm}
+                      edge="end"
+                    >
+                      {values.showConfirm ? <VisibilityOff /> : <Visibility />}
+                    </IconButton>
+                  </InputAdornment>
+                ),
+              }}
+            />
+          </FormControl>
+
           <FormControl margin={"dense"} hiddenLabel={true}>
             <TextField
               required
@@ -188,6 +243,7 @@ export const RegistrationForm = () => {
               onBlur={formik.handleBlur}
               error={formik.touched.firstName && !!formik.errors.firstName}
               helperText={formik.touched.firstName && formik.errors.firstName}
+              size="small"
             />
           </FormControl>
           <FormControl margin={"dense"} hiddenLabel={true}>
@@ -199,6 +255,7 @@ export const RegistrationForm = () => {
               onBlur={formik.handleBlur}
               error={formik.touched.middleName && !!formik.errors.middleName}
               helperText={formik.touched.middleName && formik.errors.middleName}
+              size="small"
             />
           </FormControl>
           <FormControl margin={"dense"} hiddenLabel={true}>
@@ -211,39 +268,34 @@ export const RegistrationForm = () => {
               onBlur={formik.handleBlur}
               error={formik.touched.lastName && !!formik.errors.lastName}
               helperText={formik.touched.lastName && formik.errors.lastName}
+              size="small"
             />
           </FormControl>
           <FormControl margin={"dense"} hiddenLabel={true}>
             <TextField
               required
-              id="emailAddress"
+              id="email"
               label="Email Address"
               type={"email"}
-              value={formik.values.emailAddress || ""}
+              value={formik.values.email || ""}
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
-              error={
-                formik.touched.emailAddress && !!formik.errors.emailAddress
-              }
-              helperText={
-                formik.touched.emailAddress && formik.errors.emailAddress
-              }
+              error={formik.touched.email && !!formik.errors.email}
+              helperText={formik.touched.email && formik.errors.email}
+              size="small"
             />
           </FormControl>
           <FormControl margin={"dense"} hiddenLabel={true}>
             <TextField
               required
-              id="mobileNumber"
+              id="phone"
               label="Mobile Number"
-              value={formik.values.mobileNumber || ""}
+              value={formik.values.phone || ""}
               onChange={formik.handleChange}
               onBlur={formik.handleBlur}
-              error={
-                formik.touched.mobileNumber && !!formik.errors.mobileNumber
-              }
-              helperText={
-                formik.touched.mobileNumber && formik.errors.mobileNumber
-              }
+              error={formik.touched.phone && !!formik.errors.phone}
+              helperText={formik.touched.phone && formik.errors.phone}
+              size="small"
             />
           </FormControl>
           <Button
@@ -258,8 +310,9 @@ export const RegistrationForm = () => {
           >
             Submit
           </Button>
+          <Link href="/login">Go back to login</Link>
         </FormContent>
-      </FormMain>
+      </ContainerForm>
     </>
   );
 };

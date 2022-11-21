@@ -6,8 +6,6 @@ const Container = styled.div`
   flex-flow: column nowrap;
   justify-content: center;
   align-items: center;
-  height: 100vh;
-  min-height: 100vh;
 `;
 const Main = styled.main`
   padding: 5rem 0;
@@ -51,38 +49,4 @@ const CodeTag = styled.code`
     Bitstream Vera Sans Mono, Courier New, monospace;
 `;
 
-const FormMain = styled.div`
-  width: 500px;
-  text-align: center;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-direction: column;
-  gap: 12px;
-  background: #fff;
-  border-radius: 20px;
-  box-shadow: rgba(0, 109, 177, 0.671) 0px 1px 17px;
-`;
-
-const FormTitle = styled.h1`
-  text-align: center;
-  margin-top: 1.5rem;
-  margin-bottom: 0.5rem;
-`;
-
-const FormContent = styled.form`
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-`;
-
-export {
-  Container,
-  Main,
-  Title,
-  Description,
-  CodeTag,
-  FormMain,
-  FormTitle,
-  FormContent,
-};
+export { Container, Main, Title, Description, CodeTag };
